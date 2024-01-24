@@ -1,0 +1,39 @@
+body, html {
+    height: 100%;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.centered {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
+
+.circle-button {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    font-size: 16px;
+    text-align: center;
+    line-height: 150px; /* Vertically center the text inside the circle */
+    border: none;
+    background-color: #4CAF50;
+    color: white;
+    cursor: pointer;
+    outline: none;
+}
+
+.circle-button:hover {
+    background-color: #45a049;
+}
+
+#transcribedText {
+    position: absolute;
+    bottom: 20px;
+    width: 100%;
+}
