@@ -44,6 +44,59 @@ function playAudio(audioBlob) {
   audio.play();
 }
 
+function convertTextToSpeech(text) {
+  const ttsData = new FormData();
+  fetch("/api/text-to-speech", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      text: text,
+      voiceId: "XB0fDUnXU5powFXDhCwa",
+      modelId: "eleven_multilingual_v2",
+    }),
+  })
+    .then((response) => response.arrayBuffer())
+    .then((arrayBuffer) => {
+      console.log("ArrayBuffer size: ", arrayBuffer.byteLength); // Check the size
+      /*
+      const blob = new Blob([arrayBuffer], { type: "audio/mpeg" });
+      
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = "audio10000.mp3";
+      link.click();
+      URL.revokeObjectURL(link.href);*/
+      playAudioBuffer(arrayBuffer);
+    })
+    .catch((error) => {
+      console.error("Error:", error);
+    });
+}
+
+/*
+function playGeneratedAudio(audioUrl) {
+  console.log("playing generated audio now");
+  console.log("Generated Audio URL:", audioUrl);
+  const audio = new Audio(audioUrl);
+  audio.play();
+}*/
+function playAudioBuffer(arrayBuffer) {
+  const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+  audioContext
+    .decodeAudioData(arrayBuffer)
+    .then((buffer) => {
+      const source = audioContext.createBufferSource();
+      source.buffer = buffer;
+      source.connect(audioContext.destination);
+      source.start(0);
+    })
+    .catch((e) => {
+      console.error("Error decoding audio data: ", e);
+    });
+}
+
 function sendAudioToServer(audioBlob) {
   const formData = new FormData();
   formData.append("audio", audioBlob);
@@ -56,6 +109,8 @@ function sendAudioToServer(audioBlob) {
     .then((data) => {
       document.getElementById("transcribedText").textContent =
         data.transcribedText;
+      console.log("beginning TTS");
+      convertTextToSpeech(data.transcribedText);
     })
     .catch((error) => console.error("Error:", error));
 }
